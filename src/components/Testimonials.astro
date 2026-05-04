@@ -1,0 +1,217 @@
+---
+const testimonials = [
+  {
+    quote: "g2techwork transformó nuestra idea en un producto real en tiempo récord. Su capacidad técnica y su enfoque en el negocio hicieron la diferencia frente a otras agencias que evaluamos.",
+    name: "Martina García",
+    role: "CEO & Fundadora",
+    company: "Startup Digital",
+    initials: "MG",
+    color: '#00B8C4',
+    stars: 5,
+  },
+  {
+    quote: "Migramos toda nuestra infraestructura a la nube sin downtime y con un 40% de reducción en costos. El equipo es increíblemente profesional. Los recomiendo sin dudarlo.",
+    name: "Carlos Rodríguez",
+    role: "CTO",
+    company: "TechPyme",
+    initials: "CR",
+    color: '#FF7A00',
+    stars: 5,
+  },
+  {
+    quote: "Nuestro MVP llegó al mercado en 78 días. La comunicación fue impecable durante todo el proceso. Los resultados superaron todas nuestras expectativas iniciales.",
+    name: "Laura Fernández",
+    role: "Fundadora",
+    company: "InnovaApp",
+    initials: "LF",
+    color: '#00B8C4',
+    stars: 5,
+  },
+];
+---
+
+<section class="testimonials" aria-labelledby="testimonials-title">
+  <div class="container">
+    <div class="section-header" data-animate>
+      <span class="section-tag">Social proof</span>
+      <h2 class="section-title" id="testimonials-title">
+        Resultados que hablan por sí solos
+      </h2>
+      <p class="section-subtitle">
+        Startups, pymes y empresas que confiaron en nosotros para construir sus productos.
+      </p>
+    </div>
+
+    <div class="testi-grid">
+      {testimonials.map((t, i) => (
+        <article
+          class="testi-card"
+          data-animate
+          data-delay={String(i * 150)}
+          aria-label={`Testimonio de ${t.name}`}
+        >
+          <!-- Stars -->
+          <div class="testi-stars" aria-label={`${t.stars} estrellas`}>
+            {Array.from({ length: t.stars }).map(() => (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 1l1.8 4.5H14L10.5 8l1.3 4.5L8 10l-3.8 2.5 1.3-4.5L2 5.5h4.2L8 1z"/>
+              </svg>
+            ))}
+          </div>
+
+          <!-- Quote -->
+          <blockquote class="testi-quote">
+            "{t.quote}"
+          </blockquote>
+
+          <!-- Author -->
+          <div class="testi-author">
+            <div
+              class="testi-avatar"
+              style={`--avatar-color: ${t.color}`}
+              aria-hidden="true"
+            >
+              {t.initials}
+            </div>
+            <div class="testi-meta">
+              <span class="testi-name">{t.name}</span>
+              <span class="testi-role">{t.role} @ {t.company}</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Trust bar -->
+    <div class="trust-bar" data-animate>
+      <p class="trust-text">Empresas y startups que confiaron en g2techwork</p>
+      <div class="trust-logos" aria-label="Clientes">
+        <div class="tlogo">TechPyme</div>
+        <div class="tlogo">InnovaApp</div>
+        <div class="tlogo">DigitalStart</div>
+        <div class="tlogo">CloudNord</div>
+        <div class="tlogo">AgroTech NEA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding-block: var(--section-y);
+    background: var(--color-gray-50);
+  }
+
+  .section-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .testi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 1.5rem;
+  }
+
+  .testi-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border: 1.5px solid var(--color-gray-200);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: transform 0.28s var(--ease-out), box-shadow 0.28s var(--ease-out);
+  }
+  .testi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .testi-stars {
+    display: flex;
+    gap: 3px;
+    color: #F59E0B;
+  }
+
+  .testi-quote {
+    font-size: 0.9375rem;
+    color: var(--color-gray-600);
+    line-height: 1.75;
+    font-style: italic;
+    flex: 1;
+  }
+
+  .testi-author {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-gray-100);
+  }
+  .testi-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--avatar-color, var(--color-accent));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+  .testi-meta { display: flex; flex-direction: column; gap: 0.125rem; }
+  .testi-name {
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+  .testi-role {
+    font-size: 0.8125rem;
+    color: var(--color-gray-400);
+    font-weight: 500;
+  }
+
+  /* Trust bar */
+  .trust-bar {
+    margin-top: clamp(3rem, 6vw, 4rem);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .trust-text {
+    font-size: 0.8125rem;
+    color: var(--color-gray-400);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--font-heading);
+  }
+  .trust-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  .tlogo {
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--color-gray-300);
+    letter-spacing: -0.02em;
+    transition: color 0.2s ease;
+  }
+  .tlogo:hover { color: var(--color-gray-400); }
+</style>

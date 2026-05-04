@@ -1,0 +1,373 @@
+---
+---
+
+<section class="contact" id="contacto" aria-labelledby="contact-title">
+  <div class="contact-bg" aria-hidden="true">
+    <div class="contact-blob-1"></div>
+    <div class="contact-blob-2"></div>
+  </div>
+
+  <div class="container contact-inner">
+    <!-- Left: CTA copy -->
+    <div class="contact-copy" data-animate>
+      <span class="section-tag light">Empecemos</span>
+      <h2 class="section-title light" id="contact-title">
+        ¿Listo para lanzar<br />tu producto?
+      </h2>
+      <p class="section-subtitle light" style="margin-top:1rem">
+        Agendá una consulta gratuita de 30 minutos con nuestro equipo.
+        Sin compromisos, solo ideas — y un plan concreto para tu proyecto.
+      </p>
+
+      <ul class="contact-perks">
+        <li>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Consulta 100% gratuita y sin presión
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Respuesta en menos de 24 horas
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Presupuesto detallado sin costo
+        </li>
+      </ul>
+
+      <p class="contact-alt">
+        O escribinos a
+        <a href="mailto:hola@g2techwork.com" class="contact-email">hola@g2techwork.com</a>
+      </p>
+    </div>
+
+    <!-- Right: Contact form -->
+    <div class="contact-form-wrap" data-animate data-delay="200">
+      <form class="contact-form" id="contact-form" novalidate aria-label="Formulario de contacto">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cf-name">Nombre *</label>
+            <input
+              type="text"
+              id="cf-name"
+              name="name"
+              placeholder="Tu nombre completo"
+              required
+              autocomplete="name"
+            />
+          </div>
+          <div class="form-field">
+            <label for="cf-email">Email *</label>
+            <input
+              type="email"
+              id="cf-email"
+              name="email"
+              placeholder="tu@empresa.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="cf-company">Empresa / Proyecto</label>
+          <input
+            type="text"
+            id="cf-company"
+            name="company"
+            placeholder="Nombre de tu empresa o proyecto"
+            autocomplete="organization"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="cf-service">¿Qué necesitás?</label>
+          <select id="cf-service" name="service">
+            <option value="">Seleccioná un servicio</option>
+            <option value="mvp">MVP en 90 días</option>
+            <option value="ai">Soluciones con IA</option>
+            <option value="cloud">Arquitectura Cloud</option>
+            <option value="software">Desarrollo a Medida</option>
+            <option value="other">Otro / No estoy seguro</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="cf-message">Contanos tu idea *</label>
+          <textarea
+            id="cf-message"
+            name="message"
+            rows="4"
+            placeholder="¿Qué querés construir? Cuanto más detalle, mejor podemos ayudarte."
+            required
+          ></textarea>
+        </div>
+
+        <!-- Error message -->
+        <div class="form-error" id="form-error" role="alert" aria-live="assertive" hidden></div>
+
+        <button type="submit" class="btn btn-primary btn-lg form-submit">
+          Enviar mensaje
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="form-success" id="form-success" role="alert" aria-live="polite" hidden>
+        <div class="success-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M9 16l4.5 5 9-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="success-title">¡Mensaje enviado!</p>
+        <p class="success-text">Te contactamos en menos de 24 horas. ¡Gracias por escribirnos!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const API_URL = import.meta.env.PUBLIC_API_URL as string | undefined;
+
+  const form       = document.getElementById('contact-form') as HTMLFormElement | null;
+  const successMsg = document.getElementById('form-success') as HTMLElement | null;
+  const errorMsg   = document.getElementById('form-error')   as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const btn = form.querySelector<HTMLButtonElement>('.form-submit')!;
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    if (errorMsg) errorMsg.hidden = true;
+
+    const data = new FormData(form);
+    const payload = {
+      name:    (data.get('name')    as string)?.trim(),
+      email:   (data.get('email')   as string)?.trim(),
+      company: (data.get('company') as string)?.trim() || undefined,
+      service: (data.get('service') as string) || undefined,
+      message: (data.get('message') as string)?.trim(),
+    };
+
+    try {
+      if (!API_URL) throw new Error('API_URL not configured');
+
+      const res = await fetch(API_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
+      }
+
+      form.hidden = true;
+      if (successMsg) successMsg.hidden = false;
+    } catch (err) {
+      console.error('[ContactForm]', err);
+      if (errorMsg) {
+        errorMsg.textContent = err instanceof Error ? err.message : 'Error al enviar. Intentá de nuevo.';
+        errorMsg.hidden = false;
+      }
+      btn.disabled = false;
+      btn.textContent = 'Enviar mensaje';
+    }
+  });
+</script>
+
+<style>
+  .contact {
+    position: relative;
+    padding-block: var(--section-y);
+    background: var(--color-primary-deep, #071428);
+    overflow: hidden;
+  }
+
+  .contact-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .contact-blob-1 {
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0,184,196,0.14) 0%, transparent 65%);
+    border-radius: 50%;
+  }
+  .contact-blob-2 {
+    position: absolute;
+    bottom: -100px;
+    right: -100px;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(255,122,0,0.1) 0%, transparent 65%);
+    border-radius: 50%;
+  }
+
+  .contact-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .contact-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: 0.5rem;
+  }
+  .contact-perks li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+  }
+  .contact-perks svg { color: var(--color-accent); flex-shrink: 0; }
+
+  .contact-alt {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.5rem;
+    font-family: var(--font-heading);
+  }
+  .contact-email {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s;
+  }
+  .contact-email:hover { color: #fff; }
+
+  /* Form */
+  .contact-form-wrap {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl);
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  label {
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.01em;
+  }
+
+  input, select, textarea {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+  input::placeholder, textarea::placeholder {
+    color: rgba(255,255,255,0.25);
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--color-accent);
+    background: rgba(0,184,196,0.05);
+  }
+  select {
+    cursor: pointer;
+    color: rgba(255,255,255,0.7);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4l4 4 4-4' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 2.5rem;
+  }
+  select option { background: var(--color-primary); color: #fff; }
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+  .form-submit { width: 100%; margin-top: 0.5rem; }
+  .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .form-error {
+    padding: 0.75rem 1rem;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-md);
+    color: #FCA5A5;
+    font-size: 0.875rem;
+    font-family: var(--font-heading);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* Success */
+  .form-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem 0;
+  }
+  .success-icon { color: var(--color-accent); }
+  .success-title {
+    font-family: var(--font-heading);
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: #fff;
+  }
+  .success-text {
+    font-size: 0.9375rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .contact-inner { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>

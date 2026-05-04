@@ -1,0 +1,220 @@
+---
+---
+
+<section class="local" aria-labelledby="local-title">
+  <div class="local-bg" aria-hidden="true">
+    <div class="local-blob"></div>
+    <div class="local-wordmark">CTE</div>
+  </div>
+
+  <div class="container local-inner">
+    <div class="local-text" data-animate>
+      <span class="section-tag light">Nuestro origen</span>
+      <h2 class="section-title light" id="local-title">
+        Construido en Corrientes.<br />
+        <span class="text-gradient-accent">Alcance global.</span>
+      </h2>
+      <p class="section-subtitle light" style="margin-top:1rem">
+        Somos una software factory nacida en Corrientes Capital, Argentina —
+        el corazón del nordeste argentino. Desde acá, trabajamos con clientes
+        de todo el país y el mundo sin perder la identidad que nos hace únicos.
+      </p>
+      <p class="section-subtitle light" style="margin-top:0.75rem">
+        Creemos en el talento local. Creemos en los equipos argentinos que
+        crean tecnología de clase mundial con pasión y precisión.
+      </p>
+
+      <div class="local-badges">
+        <div class="local-badge">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 1.5C5.5 1.5 3 3.8 3 6.8c0 3.5 5 9 5 9s5-5.5 5-9c0-3-2.5-5.3-5-5.3z" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"/>
+            <circle cx="8" cy="7" r="1.5" fill="currentColor"/>
+          </svg>
+          Corrientes Capital, Argentina
+        </div>
+        <div class="local-badge">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.25"/>
+            <path d="M1.5 8h13M8 1.5C6.5 3.5 5.5 5.5 5.5 8s1 4.5 2.5 6.5M8 1.5C9.5 3.5 10.5 5.5 10.5 8s-1 4.5-2.5 6.5" stroke="currentColor" stroke-width="1.25"/>
+          </svg>
+          Remote-first con alcance global
+        </div>
+        <div class="local-badge">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 2L9.8 6H14L10.5 8.5l1.3 4.5L8 10.5l-3.8 2.5 1.3-4.5L2 6h4.2L8 2z" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"/>
+          </svg>
+          Talento senior argentino
+        </div>
+      </div>
+    </div>
+
+    <div class="local-card" data-animate data-delay="200">
+      <div class="lcard-header">
+        <div class="lcard-dot"></div>
+        <span>Desde el NEA para el mundo</span>
+      </div>
+      <div class="lcard-stat-grid">
+        <div class="lcard-stat">
+          <span class="lcs-num">2024</span>
+          <span class="lcs-label">Fundada</span>
+        </div>
+        <div class="lcard-stat">
+          <span class="lcs-num">100%</span>
+          <span class="lcs-label">Argentinos</span>
+        </div>
+        <div class="lcard-stat">
+          <span class="lcs-num">AR</span>
+          <span class="lcs-label">Zona horaria GMT-3</span>
+        </div>
+        <div class="lcard-stat">
+          <span class="lcs-num">ES / EN</span>
+          <span class="lcs-label">Idiomas</span>
+        </div>
+      </div>
+      <div class="lcard-quote">
+        "El talento no tiene geografía —
+        nosotros lo demostramos desde Corrientes."
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .local {
+    position: relative;
+    padding-block: var(--section-y);
+    background: var(--color-primary);
+    overflow: hidden;
+  }
+
+  .local-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .local-blob {
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,122,0,0.1) 0%, transparent 65%);
+    border-radius: 50%;
+  }
+  .local-wordmark {
+    position: absolute;
+    bottom: -0.1em;
+    right: -0.05em;
+    font-family: var(--font-heading);
+    font-size: clamp(8rem, 20vw, 16rem);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    user-select: none;
+  }
+
+  .local-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
+  }
+
+  .local-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .local-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: 0.5rem;
+  }
+  .local-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255,255,255,0.6);
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .local-badge svg { color: var(--color-accent); flex-shrink: 0; }
+
+  /* Card */
+  .local-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl);
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .lcard-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .lcard-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(0,184,196,0.25);
+  }
+
+  .lcard-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .lcard-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .lcs-num {
+    font-family: var(--font-heading);
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .lcs-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .lcard-quote {
+    font-size: 0.9375rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.65;
+    border-left: 3px solid rgba(0,184,196,0.4);
+    padding-left: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .local-inner { grid-template-columns: 1fr; }
+    .local-wordmark { font-size: 7rem; }
+  }
+</style>

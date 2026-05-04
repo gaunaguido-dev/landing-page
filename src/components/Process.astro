@@ -1,0 +1,238 @@
+---
+const steps = [
+  {
+    num: '01',
+    icon: `<svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.75"/><path d="M17 17l5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>`,
+    title: 'Discovery',
+    description: 'Entendemos tu negocio, tus usuarios y tu mercado. Definimos alcance, objetivos y métricas de éxito para el proyecto.',
+    duration: '1–2 semanas',
+  },
+  {
+    num: '02',
+    icon: `<svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="4" width="20" height="20" rx="3" stroke="currentColor" stroke-width="1.75"/><path d="M9 9h10M9 14h7M9 19h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    title: 'Diseño',
+    description: 'Creamos la arquitectura técnica y la experiencia de usuario. Wireframes, prototipos y validación antes de escribir una línea de código.',
+    duration: '1–2 semanas',
+  },
+  {
+    num: '03',
+    icon: `<svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 10l-4 4 4 4M19 10l4 4-4 4M16 7l-4 14" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    title: 'Desarrollo',
+    description: 'Construimos en sprints cortos con entregas frecuentes. Vas viendo el progreso real mientras nosotros mantenemos el ritmo.',
+    duration: '4–8 semanas',
+  },
+  {
+    num: '04',
+    icon: `<svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 5L5 16h9l-2 8 11-13h-9l2-6z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    title: 'Lanzamiento',
+    description: 'Deploy, monitoreo y soporte post-lanzamiento. Tu producto en producción con todo bajo control y métricas en tiempo real.',
+    duration: '1 semana',
+  },
+];
+---
+
+<section class="process" id="proceso" aria-labelledby="process-title">
+  <div class="container">
+    <div class="section-header" data-animate>
+      <span class="section-tag">Cómo trabajamos</span>
+      <h2 class="section-title" id="process-title">
+        Del concepto al lanzamiento
+      </h2>
+      <p class="section-subtitle">
+        Un proceso claro, transparente y eficiente que reduce incertidumbre y acelera resultados.
+      </p>
+    </div>
+
+    <div class="steps-track">
+      {steps.map((s, i) => (
+        <div class="step" data-animate data-delay={String(i * 150)}>
+          <div class="step-connector" aria-hidden="true">
+            <div class="step-num">{s.num}</div>
+            {i < steps.length - 1 && <div class="step-line"></div>}
+          </div>
+          <div class="step-card">
+            <div class="step-icon" aria-hidden="true">
+              <Fragment set:html={s.icon} />
+            </div>
+            <div class="step-content">
+              <h3 class="step-title">{s.title}</h3>
+              <p class="step-desc">{s.description}</p>
+              <div class="step-duration">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.25"/>
+                  <path d="M6 3.5V6l2 1.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {s.duration}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Total timeline pill -->
+    <div class="timeline-summary" data-animate>
+      <div class="ts-inner">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M10 3L4 11h6l-2 6 10-10h-6l2-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Total: <strong>menos de 90 días</strong> de la primera reunión al lanzamiento</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .process {
+    padding-block: var(--section-y);
+    background: var(--color-white);
+  }
+
+  .section-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .steps-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 0;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-connector {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.25rem;
+  }
+
+  .step-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--color-accent);
+    background: rgba(0,184,196,0.07);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    transition: background 0.25s ease;
+    position: relative;
+    z-index: 1;
+  }
+  .step:hover .step-num {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-gray-200) 100%);
+    opacity: 0.4;
+    margin-left: -1px;
+  }
+
+  .step-card {
+    padding: 0 clamp(0.5rem, 2vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--color-gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .step-icon svg { width: 20px; height: 20px; }
+  .step:hover .step-icon {
+    background: rgba(0,184,196,0.1);
+    color: var(--color-accent);
+  }
+
+  .step-title {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    letter-spacing: -0.025em;
+  }
+
+  .step-desc {
+    font-size: 0.9rem;
+    color: var(--color-gray-500);
+    line-height: 1.7;
+  }
+
+  .step-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-full);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-gray-500);
+    width: fit-content;
+    margin-top: 0.25rem;
+  }
+
+  /* Timeline summary pill */
+  .timeline-summary {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    justify-content: center;
+  }
+  .ts-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 1.75rem;
+    background: linear-gradient(135deg, rgba(0,184,196,0.08) 0%, rgba(255,122,0,0.06) 100%);
+    border: 1.5px solid rgba(0,184,196,0.2);
+    border-radius: var(--radius-full);
+    font-size: 0.9375rem;
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-weight: 500;
+    text-align: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ts-inner svg { color: var(--color-orange); flex-shrink: 0; }
+  .ts-inner strong { color: var(--color-accent); font-weight: 800; }
+
+  /* Mobile: stack vertically */
+  @media (max-width: 640px) {
+    .steps-track { grid-template-columns: 1fr; gap: 2rem; }
+    .step-connector { width: auto; }
+    .step-line { display: none; }
+    .step { align-items: flex-start; flex-direction: row; gap: 1.25rem; }
+    .step-connector { flex-direction: column; align-items: center; flex-shrink: 0; margin-bottom: 0; }
+  }
+</style>

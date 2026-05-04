@@ -1,0 +1,178 @@
+---
+const services = [
+  {
+    icon: `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="20" cy="20" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="33" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="28" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="33" cy="28" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M10 12.5l7 5.5M30 12.5l-7 5.5M10 27.5l7-5.5M30 27.5l-7-5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M20 5v11M20 24v11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/></svg>`,
+    tag: 'Inteligencia Artificial',
+    title: 'Soluciones con IA',
+    description: 'Potenciamos tu negocio con inteligencia artificial: chatbots inteligentes, automatización de procesos, análisis predictivo y modelos a medida.',
+    highlight: 'IA aplicada al negocio',
+    color: 'accent',
+  },
+  {
+    icon: `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M28 22a8 8 0 10-15.6 2.5A6 6 0 1012 36h16a6 6 0 003.6-10.8A8 8 0 0028 22z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M20 28v-8M17 23l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    tag: 'Infraestructura',
+    title: 'Arquitectura Cloud',
+    description: 'Diseñamos, migramos y optimizamos tu infraestructura en la nube. AWS, GCP o Azure — máxima performance, disponibilidad y escalabilidad.',
+    highlight: 'Cloud-native desde el día uno',
+    color: 'orange',
+  },
+  {
+    icon: `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 16l-6 4 6 4M26 16l6 4-6 4M22 13l-4 14" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="6" width="30" height="28" rx="4" stroke="currentColor" stroke-width="1.5"/></svg>`,
+    tag: 'Software',
+    title: 'Desarrollo a Medida',
+    description: 'Construimos software personalizado que se adapta exactamente a tus procesos y objetivos. Frontend, backend, APIs e integraciones.',
+    highlight: 'Tu stack, tu visión',
+    color: 'accent',
+  },
+  {
+    icon: `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 7L8 20l4 3-2 10 10-6 10 6-2-10 4-3L20 7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M20 7v9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    tag: 'Producto',
+    title: 'MVP en 90 Días',
+    description: 'De la idea al mercado en tiempo récord. Validamos tu producto, minimizamos el riesgo y maximizamos el aprendizaje con usuarios reales.',
+    highlight: 'Speed to market',
+    color: 'orange',
+  },
+];
+---
+
+<section class="services" id="servicios" aria-labelledby="services-title">
+  <div class="container">
+    <div class="section-header" data-animate>
+      <span class="section-tag">Servicios</span>
+      <h2 class="section-title" id="services-title">
+        Todo lo que necesitás<br />para escalar
+      </h2>
+      <p class="section-subtitle">
+        Desde la idea hasta el lanzamiento, cubrimos cada aspecto de tu producto digital.
+      </p>
+    </div>
+
+    <ul class="services-grid" role="list">
+      {services.map((s, i) => (
+        <li
+          class={`service-card card-${s.color}`}
+          data-animate
+          data-delay={String((i + 1) * 100)}
+        >
+          <div class={`card-icon icon-${s.color}`} aria-hidden="true">
+            <Fragment set:html={s.icon} />
+          </div>
+          <div class="card-tag">{s.tag}</div>
+          <h3 class="card-title">{s.title}</h3>
+          <p class="card-desc">{s.description}</p>
+          <div class="card-highlight">
+            <span class="highlight-dot"></span>
+            {s.highlight}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services {
+    padding-block: var(--section-y);
+    background: var(--color-gray-50);
+  }
+
+  .section-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    border: 1.5px solid var(--color-gray-200);
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    transition: transform 0.28s var(--ease-out), box-shadow 0.28s var(--ease-out), border-color 0.28s ease;
+    cursor: default;
+  }
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .service-card.card-accent:hover { border-color: rgba(0,184,196,0.35); }
+  .service-card.card-orange:hover { border-color: rgba(255,122,0,0.3); }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-icon svg { width: 28px; height: 28px; }
+  .icon-accent {
+    background: rgba(0,184,196,0.1);
+    color: var(--color-accent);
+    border: 1px solid rgba(0,184,196,0.2);
+  }
+  .icon-orange {
+    background: rgba(255,122,0,0.1);
+    color: var(--color-orange);
+    border: 1px solid rgba(255,122,0,0.2);
+  }
+
+  .card-tag {
+    font-family: var(--font-heading);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-gray-400);
+  }
+
+  .card-title {
+    font-family: var(--font-heading);
+    font-size: 1.1875rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--color-primary);
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-size: 0.9375rem;
+    color: var(--color-gray-500);
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  .card-highlight {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-top: auto;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--color-gray-100);
+  }
+  .highlight-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    flex-shrink: 0;
+  }
+  .card-orange .highlight-dot { background: var(--color-orange); }
+</style>
