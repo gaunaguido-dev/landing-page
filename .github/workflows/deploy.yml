@@ -1,0 +1,198 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      skip_infra:
+        description: 'Skip CDK deploy (site-only deploy)'
+        type: boolean
+        default: false
+
+# Prevent concurrent deploys — queue rather than cancel
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  id-token: write   # Required for OIDC token exchange
+  contents: read
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+jobs:
+  # ── Job 1: Provision infrastructure with CDK ───────────────────────────────
+  infra:
+    name: CDK Deploy
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.skip_infra != 'true' }}
+
+    outputs:
+      bucket_name:     ${{ steps.outputs.outputs.bucket_name }}
+      distribution_id: ${{ steps.outputs.outputs.distribution_id }}
+      site_url:        ${{ steps.outputs.outputs.site_url }}
+      api_endpoint:    ${{ steps.outputs.outputs.api_endpoint }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            infra/package-lock.json
+            infra/lambdas/send-email/package-lock.json
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume:    arn:aws:iam::349131272242:role/Admin-Github
+          aws-region:        us-east-1
+          role-session-name: GHA-Deploy-${{ github.run_id }}-${{ github.run_attempt }}
+
+      # Write the Resend API key to SSM as a SecureString.
+      # CDK references this parameter by name — the value never appears
+      # in a CloudFormation template.
+      - name: Store Resend API key in SSM
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          aws ssm put-parameter \
+            --name    '/g2techwork/resend_api_key' \
+            --value   "$RESEND_API_KEY" \
+            --type    SecureString \
+            --overwrite \
+            --region  us-east-1
+
+      # Install Lambda dependencies so esbuild (via NodejsFunction) can
+      # resolve and bundle the `resend` package during CDK synthesis.
+      - name: Install Lambda dependencies
+        run: npm ci
+        working-directory: infra/lambdas/send-email
+
+      - name: Install CDK dependencies
+        run: npm ci
+        working-directory: infra
+
+      - name: CDK Synth (validate)
+        run: npx cdk synth --quiet
+        working-directory: infra
+
+      - name: CDK Deploy
+        id: cdk_deploy
+        run: |
+          npx cdk deploy --all \
+            --require-approval never \
+            --outputs-file cdk-outputs.json \
+            --progress events
+        working-directory: infra
+
+      # Parse the CDK outputs JSON and expose them as job outputs
+      - name: Extract CDK outputs
+        id: outputs
+        working-directory: infra
+        run: |
+          BUCKET=$(jq -r '."G2TechworkSite".BucketName'     cdk-outputs.json)
+          DIST_ID=$(jq -r '."G2TechworkSite".DistributionId' cdk-outputs.json)
+          SITE_URL=$(jq -r '."G2TechworkSite".SiteUrl'       cdk-outputs.json)
+          API_URL=$(jq -r '."G2TechworkApi".ApiEndpoint'     cdk-outputs.json)
+
+          echo "bucket_name=$BUCKET"     >> "$GITHUB_OUTPUT"
+          echo "distribution_id=$DIST_ID" >> "$GITHUB_OUTPUT"
+          echo "site_url=$SITE_URL"       >> "$GITHUB_OUTPUT"
+          echo "api_endpoint=$API_URL"    >> "$GITHUB_OUTPUT"
+
+          echo "### Infrastructure outputs" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Key | Value |"            >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|-------|"            >> "$GITHUB_STEP_SUMMARY"
+          echo "| S3 Bucket | \`$BUCKET\`"     >> "$GITHUB_STEP_SUMMARY"
+          echo "| CloudFront ID | \`$DIST_ID\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "| API Endpoint | \`$API_URL\`"  >> "$GITHUB_STEP_SUMMARY"
+          echo "| Site URL | $SITE_URL"         >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Job 2: Build Astro site and sync to S3 ────────────────────────────────
+  deploy-site:
+    name: Build & Sync Site
+    runs-on: ubuntu-latest
+    needs: infra
+    # Also run if infra was skipped (workflow_dispatch with skip_infra=true)
+    if: always() && !failure() && !cancelled()
+
+    env:
+      BUCKET_NAME:     ${{ needs.infra.outputs.bucket_name }}
+      DISTRIBUTION_ID: ${{ needs.infra.outputs.distribution_id }}
+      SITE_URL:        ${{ needs.infra.outputs.site_url }}
+      PUBLIC_API_URL:  ${{ needs.infra.outputs.api_endpoint }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume:    arn:aws:iam::349131272242:role/Admin-Github
+          aws-region:        us-east-1
+          role-session-name: GHA-Site-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Install site dependencies
+        run: npm ci
+
+      # PUBLIC_API_URL is embedded at build time by Astro's Vite pipeline.
+      # The value comes from the CDK output of the previous job.
+      - name: Build Astro site
+        run: npm run build
+        env:
+          PUBLIC_API_URL: ${{ env.PUBLIC_API_URL }}
+
+      # Upload static assets with 1-year immutable cache.
+      # HTML/XML/JSON gets no-cache so users always fetch fresh content.
+      - name: Upload assets to S3 (immutable cache)
+        run: |
+          aws s3 sync dist/ "s3://$BUCKET_NAME/" \
+            --delete \
+            --cache-control "public,max-age=31536000,immutable" \
+            --exclude "*.html" \
+            --exclude "*.xml"  \
+            --exclude "*.txt"  \
+            --exclude "*.json"
+
+      - name: Upload HTML/manifest to S3 (no-cache)
+        run: |
+          aws s3 sync dist/ "s3://$BUCKET_NAME/" \
+            --exclude "*"      \
+            --include "*.html" \
+            --include "*.xml"  \
+            --include "*.txt"  \
+            --include "*.json" \
+            --cache-control "public,max-age=0,must-revalidate"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+          echo "Invalidation ID: $INVALIDATION_ID"
+
+      - name: Write job summary
+        run: |
+          echo "## Deploy complete 🚀" >> "$GITHUB_STEP_SUMMARY"
+          echo ""                      >> "$GITHUB_STEP_SUMMARY"
+          echo "**$SITE_URL**"         >> "$GITHUB_STEP_SUMMARY"
+          echo ""                      >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: \`${{ github.sha }}\`"          >> "$GITHUB_STEP_SUMMARY"
+          echo "Branch: \`${{ github.ref_name }}\`"     >> "$GITHUB_STEP_SUMMARY"
+          echo "Triggered by: ${{ github.actor }}"      >> "$GITHUB_STEP_SUMMARY"

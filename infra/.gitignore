@@ -1,10 +1,9 @@
-.env
+node_modules/
+cdk.out/
+cdk-outputs.json
 lambdas/**/node_modules/
 lambdas/**/dist/
-terraform/.terraform/
-terraform/.terraform.lock.hcl
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-terraform/terraform.tfvars
-terraform/*.tfplan
-terraform/.build/
+*.js
+*.d.ts
+!jest.config.js
+.env
