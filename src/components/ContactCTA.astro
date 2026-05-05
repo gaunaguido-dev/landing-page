@@ -171,7 +171,7 @@
         throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`);
       }
 
-      form.hidden = true;
+      form.style.display = 'none';
       if (successMsg) successMsg.hidden = false;
     } catch (err) {
       console.error('[ContactForm]', err);

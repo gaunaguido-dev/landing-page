@@ -1,4 +1,5 @@
 ---
+
 ---
 
 <section class="hero" id="inicio" aria-label="Sección principal">
@@ -25,16 +26,27 @@
 
     <!-- Subheadline -->
     <p class="hero-sub" data-animate data-delay="200">
-      Desarrollo a medida, inteligencia artificial y arquitectura cloud
-      para startups, pymes y empresas que quieren crecer.
+      Desarrollo a medida, inteligencia artificial y arquitectura cloud para
+      startups, pymes y empresas que quieren crecer.
     </p>
 
     <!-- CTAs -->
     <div class="hero-ctas" data-animate data-delay="300">
       <a href="#contacto" class="btn btn-primary btn-lg">
         Agendá una consulta
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 8h10M9 4l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
         </svg>
       </a>
       <a href="#servicios" class="btn btn-ghost-light btn-lg">
@@ -45,18 +57,18 @@
     <!-- Stats -->
     <div class="hero-stats" data-animate data-delay="500">
       <div class="stat">
-        <span class="stat-num">50<span class="stat-plus">+</span></span>
-        <span class="stat-label">Proyectos<br/>entregados</span>
+        <span class="stat-num">5<span class="stat-plus">+</span></span>
+        <span class="stat-label">Proyectos<br />entregados</span>
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
       <div class="stat">
         <span class="stat-num">&lt;90</span>
-        <span class="stat-label">Días al<br/>lanzamiento</span>
+        <span class="stat-label">Días al<br />lanzamiento</span>
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
       <div class="stat">
         <span class="stat-num">100<span class="stat-plus">%</span></span>
-        <span class="stat-label">Clientes<br/>satisfechos</span>
+        <span class="stat-label">Clientes<br />satisfechos</span>
       </div>
     </div>
   </div>
@@ -83,7 +95,11 @@
   }
 
   /* ── Background atmosphere ── */
-  .hero-bg { position: absolute; inset: 0; pointer-events: none; }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
 
   .blob {
     position: absolute;
@@ -94,14 +110,22 @@
   .blob-1 {
     width: min(600px, 80vw);
     height: min(600px, 80vw);
-    background: radial-gradient(circle, rgba(0,184,196,0.18) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(0, 184, 196, 0.18) 0%,
+      transparent 70%
+    );
     top: -15%;
     left: -15%;
   }
   .blob-2 {
     width: min(500px, 70vw);
     height: min(500px, 70vw);
-    background: radial-gradient(circle, rgba(255,122,0,0.14) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(255, 122, 0, 0.14) 0%,
+      transparent 70%
+    );
     bottom: -10%;
     right: -10%;
     animation-delay: -7s;
@@ -110,13 +134,20 @@
   .dot-grid {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px);
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.045) 1px,
+      transparent 1px
+    );
     background-size: 32px 32px;
   }
 
   @keyframes drift {
-    from { transform: translate(0, 0) scale(1); }
-    to   { transform: translate(30px, 20px) scale(1.06); }
+    from {
+      transform: translate(0, 0) scale(1);
+    }
+    to {
+      transform: translate(30px, 20px) scale(1.06);
+    }
   }
 
   /* ── Content ── */
@@ -136,10 +167,10 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.4rem 1rem;
-    background: rgba(0,184,196,0.12);
-    border: 1px solid rgba(0,184,196,0.3);
+    background: rgba(0, 184, 196, 0.12);
+    border: 1px solid rgba(0, 184, 196, 0.3);
     border-radius: var(--radius-full);
-    color: rgba(255,255,255,0.85);
+    color: rgba(255, 255, 255, 0.85);
     font-family: var(--font-heading);
     font-size: 0.8125rem;
     font-weight: 600;
@@ -150,13 +181,18 @@
     height: 7px;
     border-radius: 50%;
     background: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(0,184,196,0.3);
+    box-shadow: 0 0 0 3px rgba(0, 184, 196, 0.3);
     animation: pulse-dot 2s ease-in-out infinite;
     flex-shrink: 0;
   }
   @keyframes pulse-dot {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(0,184,196,0.3); }
-    50%       { box-shadow: 0 0 0 6px rgba(0,184,196,0.1); }
+    0%,
+    100% {
+      box-shadow: 0 0 0 3px rgba(0, 184, 196, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(0, 184, 196, 0.1);
+    }
   }
 
   /* Headline */
@@ -172,13 +208,19 @@
   .hero-days {
     color: var(--color-orange);
   }
-  .br-md { display: none; }
-  @media (min-width: 640px) { .br-md { display: block; } }
+  .br-md {
+    display: none;
+  }
+  @media (min-width: 640px) {
+    .br-md {
+      display: block;
+    }
+  }
 
   /* Sub */
   .hero-sub {
     font-size: clamp(1rem, 1.6vw, 1.1875rem);
-    color: rgba(255,255,255,0.62);
+    color: rgba(255, 255, 255, 0.62);
     line-height: 1.75;
     max-width: 560px;
   }
@@ -198,7 +240,7 @@
     gap: clamp(1.5rem, 4vw, 3.5rem);
     margin-top: 1rem;
     padding-top: 2rem;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     flex-wrap: wrap;
     justify-content: center;
   }
@@ -223,7 +265,7 @@
   .stat-label {
     font-size: 0.78125rem;
     font-weight: 500;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255, 255, 255, 0.45);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     line-height: 1.4;
@@ -232,7 +274,7 @@
   .stat-divider {
     width: 1px;
     height: 40px;
-    background: rgba(255,255,255,0.12);
+    background: rgba(255, 255, 255, 0.12);
   }
 
   /* Scroll hint */
@@ -246,7 +288,7 @@
   .scroll-mouse {
     width: 24px;
     height: 38px;
-    border: 2px solid rgba(255,255,255,0.25);
+    border: 2px solid rgba(255, 255, 255, 0.25);
     border-radius: 12px;
     display: flex;
     align-items: flex-start;
@@ -257,22 +299,42 @@
   .scroll-wheel {
     width: 3px;
     height: 8px;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 2px;
     animation: scroll-anim 2.5s ease-in-out infinite;
   }
   @keyframes float-mouse {
-    0%, 100% { opacity: 0.6; transform: translateY(0); }
-    50%       { opacity: 1;   transform: translateY(4px); }
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(4px);
+    }
   }
   @keyframes scroll-anim {
-    0%   { transform: translateY(0);  opacity: 1; }
-    60%  { transform: translateY(8px); opacity: 0; }
-    100% { transform: translateY(0);  opacity: 0; }
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    60% {
+      transform: translateY(8px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 0;
+    }
   }
 
   @media (max-width: 480px) {
-    .stat-divider { display: none; }
-    .hero-stats   { gap: 2rem; }
+    .stat-divider {
+      display: none;
+    }
+    .hero-stats {
+      gap: 2rem;
+    }
   }
 </style>
