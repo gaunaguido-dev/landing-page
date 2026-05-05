@@ -70,8 +70,8 @@ jobs:
 
       # Install Lambda dependencies so esbuild (via NodejsFunction) can
       # resolve and bundle the `resend` package during CDK synthesis.
-      - name: Install Lambda dependencies
-        run: npm ci
+      - name: Build Lambda bundle
+        run: npm ci && npm run build
         working-directory: infra/lambdas/send-email
 
       - name: Install CDK dependencies

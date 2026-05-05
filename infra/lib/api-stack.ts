@@ -3,12 +3,10 @@ import * as cdk    from 'aws-cdk-lib';
 import * as iam    from 'aws-cdk-lib/aws-iam';
 import * as logs   from 'aws-cdk-lib/aws-logs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
-import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
-import * as apigwv2      from 'aws-cdk-lib/aws-apigatewayv2';
-import * as apigwInteg   from 'aws-cdk-lib/aws-apigatewayv2-integrations';
-// CfnAccount is in aws-apigateway (shared account-level resource for v1 + v2)
+import * as apigwv2    from 'aws-cdk-lib/aws-apigatewayv2';
+import * as apigwInteg from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { CfnAccount as ApiGwCfnAccount } from 'aws-cdk-lib/aws-apigateway';
-import * as ssm          from 'aws-cdk-lib/aws-ssm';
+import * as ssm     from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
 export interface ApiStackProps extends cdk.StackProps {
@@ -26,8 +24,8 @@ export class ApiStack extends cdk.Stack {
     super(scope, id, props);
 
     // ── SSM — reference the pre-existing SecureString ──────────────────────
-    // The parameter is created by the CI/CD pipeline (not by CDK) so the
-    // plaintext value never touches CloudFormation.
+    // The parameter is written by CI (aws ssm put-parameter) so the value
+    // never appears in any CloudFormation template.
     const resendKeyParam = ssm.StringParameter.fromSecureStringParameterAttributes(
       this, 'ResendApiKeyParam',
       { parameterName: '/g2techwork/resend_api_key' },
@@ -40,35 +38,26 @@ export class ApiStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    // ── Lambda — NodejsFunction auto-bundles via esbuild ───────────────────
-    // Entry path is resolved relative to this source file at compile time.
-    const lambdaRoot = path.join(__dirname, '../lambdas/send-email');
+    // ── Lambda function ────────────────────────────────────────────────────
+    // We use lambda.Function + Code.fromAsset instead of NodejsFunction to
+    // avoid CDK's depsLockFilePath auto-detection walking up past the lambda
+    // directory and picking up infra/package-lock.json.
+    //
+    // The bundle (dist/index.js) is produced by esbuild in CI BEFORE this
+    // stack is synthesised — see the "Build Lambda" step in deploy.yml.
+    // Locally: cd infra/lambdas/send-email && npm ci && npm run build
+    const lambdaDist = path.join(__dirname, '../lambdas/send-email/dist');
 
-    const sendEmailFn = new lambdaNodejs.NodejsFunction(this, 'SendEmailFn', {
-      functionName:   `${id}-send-email`,
-      description:    'Handles contact-form submissions, sends emails via Resend',
-      entry:          path.join(lambdaRoot, 'src/index.ts'),
-      handler:        'handler',
-      runtime:        lambda.Runtime.NODEJS_20_X,
-      architecture:   lambda.Architecture.ARM_64,
-      timeout:        cdk.Duration.seconds(15),
-      memorySize:     256,
+    const sendEmailFn = new lambda.Function(this, 'SendEmailFn', {
+      functionName:  `${id}-send-email`,
+      description:   'Handles contact-form submissions, sends emails via Resend',
+      code:          lambda.Code.fromAsset(lambdaDist),
+      handler:       'index.handler',
+      runtime:       lambda.Runtime.NODEJS_20_X,
+      architecture:  lambda.Architecture.ARM_64,
+      timeout:       cdk.Duration.seconds(15),
+      memorySize:    256,
       logGroup,
-      // projectRoot + depsLockFilePath must both point inside the lambda directory.
-      // Without the explicit depsLockFilePath, CDK walks up and picks up
-      // infra/package-lock.json, which fails the "must be under projectRoot" check.
-      projectRoot:      lambdaRoot,
-      depsLockFilePath: path.join(lambdaRoot, 'package-lock.json'),
-
-      bundling: {
-        // @aws-sdk/* is available in the Node 20 Lambda runtime — no need to bundle
-        externalModules: ['@aws-sdk/*'],
-        minify:          true,
-        sourceMap:       false,
-        target:          'node20',
-        tsconfig:        path.join(lambdaRoot, 'tsconfig.json'),
-      },
-
       environment: {
         RESEND_API_KEY_PARAM: resendKeyParam.parameterName,
         FROM_EMAIL:           props.fromEmail,
@@ -110,24 +99,21 @@ export class ApiStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    // Enable access logging on the default stage
     const cfnStage = httpApi.defaultStage?.node.defaultChild as apigwv2.CfnStage;
     if (cfnStage) {
       cfnStage.accessLogSettings = {
         destinationArn: apiLogGroup.logGroupArn,
         format: JSON.stringify({
-          requestId:       '$context.requestId',
-          ip:              '$context.identity.sourceIp',
-          requestTime:     '$context.requestTime',
-          httpMethod:      '$context.httpMethod',
-          routeKey:        '$context.routeKey',
-          status:          '$context.status',
-          responseLength:  '$context.responseLength',
+          requestId:        '$context.requestId',
+          ip:               '$context.identity.sourceIp',
+          requestTime:      '$context.requestTime',
+          httpMethod:       '$context.httpMethod',
+          routeKey:         '$context.routeKey',
+          status:           '$context.status',
+          responseLength:   '$context.responseLength',
           integrationError: '$context.integrationErrorMessage',
         }),
       };
-
-      // Throttle the default stage
       cfnStage.defaultRouteSettings = {
         throttlingBurstLimit: 50,
         throttlingRateLimit:  20,
@@ -143,7 +129,6 @@ export class ApiStack extends cdk.Stack {
         ),
       ],
     });
-    // CfnAccount is an account-level singleton (shared across v1 and v2 APIs)
     const cfnAccount = new ApiGwCfnAccount(this, 'ApiGwAccount', {
       cloudWatchRoleArn: apiGwRole.roleArn,
     });
