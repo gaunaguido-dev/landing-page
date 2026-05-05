@@ -54,9 +54,11 @@ export class ApiStack extends cdk.Stack {
       timeout:        cdk.Duration.seconds(15),
       memorySize:     256,
       logGroup,
-      // projectRoot at top level — tells CDK/esbuild where to find node_modules
-      // so it can resolve and bundle the `resend` package installed there
-      projectRoot:    lambdaRoot,
+      // projectRoot + depsLockFilePath must both point inside the lambda directory.
+      // Without the explicit depsLockFilePath, CDK walks up and picks up
+      // infra/package-lock.json, which fails the "must be under projectRoot" check.
+      projectRoot:      lambdaRoot,
+      depsLockFilePath: path.join(lambdaRoot, 'package-lock.json'),
 
       bundling: {
         // @aws-sdk/* is available in the Node 20 Lambda runtime — no need to bundle
