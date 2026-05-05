@@ -30,9 +30,24 @@ interface ContactPayload {
 
 // ── Config ─────────────────────────────────────────────────────────────────
 
-const FROM_EMAIL     = process.env.FROM_EMAIL     || 'hola@g2techwork.com';
-const TO_EMAIL       = process.env.TO_EMAIL       || 'hola@g2techwork.com';
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'contact@g2techwork.com';
+const TO_EMAIL   = process.env.TO_EMAIL   || 'contact@g2techwork.com';
+
+const ALLOWED_ORIGINS = new Set(
+  (process.env.ALLOWED_ORIGINS || 'https://g2techwork.com').split(',').map((s: string) => s.trim()),
+);
+
+function getCorsHeaders(requestOrigin?: string) {
+  const origin = requestOrigin && ALLOWED_ORIGINS.has(requestOrigin)
+    ? requestOrigin
+    : [...ALLOWED_ORIGINS][0];
+  return {
+    'Access-Control-Allow-Origin':  origin,
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json',
+  };
+}
 
 const SERVICE_LABELS: Record<string, string> = {
   mvp:      'MVP en 90 Días',
@@ -42,18 +57,11 @@ const SERVICE_LABELS: Record<string, string> = {
   other:    'Otro / No estoy seguro',
 };
 
-// ── CORS headers ────────────────────────────────────────────────────────────
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin':  ALLOWED_ORIGIN,
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Content-Type': 'application/json',
-};
-
 // ── Handler ─────────────────────────────────────────────────────────────────
 
 export const handler = async (event: AWSLambdaEvent) => {
+  const corsHeaders = getCorsHeaders(event.headers?.origin);
+
   // Preflight
   if (event.requestContext?.http?.method === 'OPTIONS') {
     return { statusCode: 204, headers: corsHeaders, body: '' };
@@ -64,20 +72,20 @@ export const handler = async (event: AWSLambdaEvent) => {
   try {
     body = JSON.parse(event.body ?? '{}');
   } catch {
-    return respond(400, { error: 'Body JSON inválido.' });
+    return respond(400, { error: 'Body JSON inválido.' }, corsHeaders);
   }
 
   // Validate required fields
   const { name, email, message, company, service } = body;
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
-    return respond(400, { error: 'Los campos name, email y message son requeridos.' });
+    return respond(400, { error: 'Los campos name, email y message son requeridos.' }, corsHeaders);
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return respond(400, { error: 'El formato del email es inválido.' });
+    return respond(400, { error: 'El formato del email es inválido.' }, corsHeaders);
   }
   // Sanity length limits
   if (name.length > 100 || email.length > 200 || message.length > 4000) {
-    return respond(400, { error: 'Uno o más campos exceden el largo máximo.' });
+    return respond(400, { error: 'Uno o más campos exceden el largo máximo.' }, corsHeaders);
   }
 
   try {
@@ -100,17 +108,17 @@ export const handler = async (event: AWSLambdaEvent) => {
       }),
     ]);
 
-    return respond(200, { success: true });
+    return respond(200, { success: true }, corsHeaders);
   } catch (err) {
     console.error('[send-email] Resend error:', err);
-    return respond(500, { error: 'Error al enviar el mensaje. Intentá de nuevo más tarde.' });
+    return respond(500, { error: 'Error al enviar el mensaje. Intentá de nuevo más tarde.' }, corsHeaders);
   }
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-function respond(statusCode: number, body: object) {
-  return { statusCode, headers: corsHeaders, body: JSON.stringify(body) };
+function respond(statusCode: number, body: object, headers: Record<string, string>) {
+  return { statusCode, headers, body: JSON.stringify(body) };
 }
 
 function esc(s: string): string {
@@ -297,6 +305,7 @@ function buildConfirmationEmail(name: string): string {
 
 interface AWSLambdaEvent {
   body?: string;
+  headers?: Record<string, string>;
   requestContext?: {
     http?: { method: string };
   };

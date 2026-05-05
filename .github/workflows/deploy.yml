@@ -84,6 +84,8 @@ jobs:
 
       - name: CDK Deploy
         id: cdk_deploy
+        env:
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
         run: |
           npx cdk deploy --all \
             --require-approval never \

@@ -12,8 +12,8 @@ const env: cdk.Environment = {
 
 // Config — override defaults with CDK context flags:
 //   cdk deploy --context fromEmail=other@domain.com
-const fromEmail = app.node.tryGetContext('fromEmail') ?? 'hola@g2techwork.com';
-const toEmail   = app.node.tryGetContext('toEmail')   ?? 'hola@g2techwork.com';
+const fromEmail = 'contact@g2techwork.com';
+const toEmail   = process.env.TO_EMAIL ?? 'contact@g2techwork.com';
 
 // ── Stacks ──────────────────────────────────────────────────────────────────
 
@@ -23,10 +23,10 @@ new ApiStack(app, 'G2TechworkApi', {
   env,
   fromEmail,
   toEmail,
-  // Pass the CF domain as allowed CORS origin.
-  // CDK resolves this cross-stack reference at deploy time —
-  // SiteStack is guaranteed to deploy before ApiStack.
-  allowedOrigin: `https://${siteStack.distribution.distributionDomainName}`,
+  allowedOrigins: [
+    'https://g2techwork.com',
+    `https://${siteStack.distribution.distributionDomainName}`,
+  ],
 });
 
 app.synth();

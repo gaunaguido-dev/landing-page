@@ -12,8 +12,8 @@ import { Construct } from 'constructs';
 export interface ApiStackProps extends cdk.StackProps {
   fromEmail:     string;
   toEmail:       string;
-  /** Injected as ALLOWED_ORIGIN env var in the Lambda (CORS). */
-  allowedOrigin: string;
+  /** Injected as ALLOWED_ORIGINS env var in the Lambda (comma-separated, CORS). */
+  allowedOrigins: string[];
 }
 
 export class ApiStack extends cdk.Stack {
@@ -62,7 +62,7 @@ export class ApiStack extends cdk.Stack {
         RESEND_API_KEY_PARAM: resendKeyParam.parameterName,
         FROM_EMAIL:           props.fromEmail,
         TO_EMAIL:             props.toEmail,
-        ALLOWED_ORIGIN:       props.allowedOrigin,
+        ALLOWED_ORIGINS:      props.allowedOrigins.join(','),
       },
     });
 
@@ -77,7 +77,7 @@ export class ApiStack extends cdk.Stack {
       corsPreflight: {
         allowHeaders:  ['Content-Type'],
         allowMethods:  [apigwv2.CorsHttpMethod.POST, apigwv2.CorsHttpMethod.OPTIONS],
-        allowOrigins:  [props.allowedOrigin],
+        allowOrigins:  props.allowedOrigins,
         maxAge:        cdk.Duration.seconds(300),
       },
     });
